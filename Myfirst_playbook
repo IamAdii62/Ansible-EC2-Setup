@@ -1,0 +1,25 @@
+---
+- name: Install nginx on Ubuntu
+  hosts: webservers
+  become: yes
+
+  vars:
+    pkg_name: nginx
+
+  tasks:
+    - name: Update apt cache (if needed)
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_pkg_mgr == 'apt'
+
+    - name: Install nginx package
+      apt:
+        name: "{{ pkg_name }}"
+        state: present
+
+    - name: Ensure nginx service is enabled & started
+      systemd:
+        name: nginx
+        enabled: yes
+        state: started
